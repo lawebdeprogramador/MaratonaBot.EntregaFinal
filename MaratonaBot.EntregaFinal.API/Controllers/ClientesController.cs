@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using LiteDB;
@@ -26,21 +27,23 @@ namespace MaratonaBot.EntregaFinal.API.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "Get")]
-        public Cliente Get(int id)
+        [HttpGet("{name}")]
+        public Cliente GetByName(string name)
         {
             using (var db = new LiteDB.LiteRepository(new LiteDatabase(dirBanco)))
             {
-                return db.Query<Cliente>("clientes").Where(x => x.ClienteId == id).Single();
+                return db.Query<Cliente>("clientes").Where(x => x.Nome.ToLowerInvariant() == name.ToLowerInvariant()).SingleOrDefault();
             }
         }
         
         [HttpPost]
-        public void Post([FromBody]Cliente cliente)
+        public Cliente Post([FromBody]Cliente cliente)
         {
             using (var db = new LiteDB.LiteRepository(new LiteDatabase(dirBanco)))
             {
-                db.Insert<Cliente>(cliente, "clientes");
+                cliente.ClienteId = db.Insert<Cliente>(cliente, "clientes").AsInt32 ;
+
+                return cliente;
             }
         }
         

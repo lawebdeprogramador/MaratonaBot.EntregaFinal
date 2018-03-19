@@ -5,14 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MaratonaBot.EntregaFinal.API
 {
-    public class Customer
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string[] Phones { get; set; }
-        public bool IsActive { get; set; }
-    }
-
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -36,7 +28,7 @@ namespace MaratonaBot.EntregaFinal.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+      
             app.UseMvc();
         }
     }

@@ -26,12 +26,12 @@ namespace MaratonaBot.EntregaFinal.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public Servico Get(int id)
+        [HttpGet("{descricao}")]
+        public Servico GetByDescription(string descricao)
         {
             using (var db = new LiteDB.LiteRepository(new LiteDatabase(dirBanco)))
             {
-                return db.Query<Servico>("servicos").Where( x => x.ServicoId == id).Single();
+                return db.Query<Servico>("servicos").Where(x => x.Descricao.ToLowerInvariant() == descricao.ToLowerInvariant()).SingleOrDefault();
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using LiteDB;
@@ -21,25 +22,33 @@ namespace MaratonaBot.EntregaFinal.API.Controllers
         {
             using (var db = new LiteDB.LiteRepository(new LiteDatabase(dirBanco)))
             {
-                return db.Query<Agenda>("agendas").ToList();
+                return db.Query<Agenda>("agendas")
+                    .Include(x => x.Servico)
+                    .Include(x => x.Cliente)
+                    .ToList();
             }
         }
 
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}")]
         public Agenda Get(int id)
         {
             using (var db = new LiteDB.LiteRepository(new LiteDatabase(dirBanco)))
             {
-                return db.Query<Agenda>("agendas").Where(x => x.AgendaId == id).Single();
+                return db.Query<Agenda>("agendas")
+                    .Include( x => x.Servico)
+                    .Include( x => x.Cliente)
+                    .Where(x => x.AgendaId == id).SingleOrDefault();
             }
         }
 
         [HttpPost]
-        public void Post([FromBody]Agenda agenda)
+        public Agenda Post([FromBody]Agenda agenda)
         {
             using (var db = new LiteDB.LiteRepository(new LiteDatabase(dirBanco)))
             {
-                db.Insert<Agenda>(agenda, "agendas");
+                agenda.AgendaId = db.Insert<Agenda>(agenda, "agendas").AsInt32;
+
+                return agenda;
             }
         }
 
